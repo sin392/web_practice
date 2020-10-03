@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% block title %}Message{% endblock %}
+{% block headline %}{{ title }}{% endblock %}
+{% block content %}
+<div class="text-align h6">
+    <a href="/logout">Logout</a>
+</div>
+<div class="alert lert-success p-1">
+    <h5>{{ message }}</h5>
+</div>
+<!-- 切り替えタブ部 -->
+<ul class="nav nav-tabs" role="tablist">
+    <!-- １つ目のタブ -->
+    <li class="nav-item">
+        <a href="#msgs" class="nav-link" data-toggle="tab" role="tab">Message</a>
+    </li>
+    <!-- ２つ目のタブ -->
+    <li class="nav-item">
+        <a href="#frms" class="nav-link" data-toggle="tab" role="tab">Form</a>
+    </li>
+</ul>
+
+<!-- コンテンツ部 -->
+<div class="tab-content">
+    <!-- １つ目のコンテンツ -->
+    <div class="tab-pane fade show active" id="msgs" ole="tabpanel">
+        <h5 class="p-3 h5 text-center">* Posted Messages *</h5>
+        <ul class="list-group lilst-group-flush">
+            {% for item in data | reverse %}
+            <li class="list-group-item">
+                {{item[1]}} ({{item[0]}})
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <!-- ２つ目のコンテンツ -->
+    <div class="tab-pane fade" id="frms" role="tabpanel">
+        <h5 class="mt-4">Post your message:</h5>
+        <div class="card mt-4">
+            <div class="card-body">
+                <form action="/" method="post">
+                    <div class="form-group">
+                        <label for="comment">Message</label>
+                        <div class="row">
+                            <input type="text" class="form-control col" id="comment" name="comment">
+                            <input type="submit" class="btn btn-primary col-3 col-sm-3 col-md-2 col-lg-2 col-xl-2" 
+                            value="POST NOW!">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block footer %}copyright 2019{% endblock %}
