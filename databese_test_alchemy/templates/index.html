@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+{% block Index %}Index{% endblock %}
+{% block headline %}{{ title }}{% endblock %}
+{% block content %}
+<div class="mb-3" id="msg">{{ message }}</div>
+
+<!-- Vue.js container -->
+<div id="app" class="m-3"><mycomp /></div>
+
+<!-- mycomp's template -->
+<script type="text/x-template" id="mycomp-template">
+    <div>
+        <div class="form-group">
+            <label for="name">name</label>
+            <input type="text" class="form-control" id="name" v-model="f_name">
+        </div>
+        <div class="form-group">
+            <label for="mail">mail</label>
+            <input type="text" class="form-control" id="mail" v-model="f_mail">
+        </div>
+        <div class="form-group">
+            <label for="age">age</label>
+            <input type="text" class="form-control" id="age" v-model="f_age">
+        </div>
+        <div class="form-group"><button class="btn btn-primary" v-on:click="action">Add</button></div>
+        <hr>
+        <div class="alert alert-info">
+            <h5>{% raw %}{{ alert }}{% endraw %}</h5>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Mail</th>
+                    <th>Age</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in data">
+                    {% raw %}
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.mail }}</td>
+                    <td>{{ item.age }}</td>
+                    {% endraw %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<!-- Vue.js Script -->
+<script>
+Vue.component("mycomp", {
+    template:"#mycomp-template",
+    data: function() {
+        return {
+            alert: "This is SQLite3 Database sample!",
+            data: [(-1, "wait...", "","")]
+        }
+    },
+    methods: {
+        getdata: function() {
+            let self = this;
+            $.get("/ajax", function(data) {
+                self.data = eval(data);
+            });
+        },
+        action: function() {
+            let formData = new FormData();
+            formData.append("name", this.f_name);
+            formData.append("mail", this.f_mail);
+            formData.append("age", this.f_age);
+            let self = this;
+            $.ajax({
+                type: "POST",
+                url: "/form",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(data) {
+                    self.f_name = "";
+                    self.f_mail = "";
+                    self.f_age = "";
+                    self.getdata();
+                },
+                error: function(request, status, err) {
+                    console.log(err);
+                }
+            });
+        }
+    },
+    created: function() {
+        this.getdata();
+    }
+});
+
+// start Vue
+new Vue({
+    el: "#app",
+});
+</script>
+
+
+{% endblock %}
+{% block footer %}copyright 2019{% endblock %}
